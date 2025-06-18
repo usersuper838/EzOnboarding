@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 const router = Router();
 
-import { fetchJiraTicket } from '../services/jiraService';
+import { fetchJiraTicket, fetchTodoTickets } from '../services/jiraService';
 
 // Test endpoint: connects to Jira and returns a simple result
 router.get('/test', async (req, res) => {
@@ -25,6 +25,12 @@ router.get('/test', async (req, res) => {
     };
     res.json({ success: false, error: errorDetails, config });
   }
+});
+
+// List all tickets in the 'To Do' column
+router.get('/todo', async (req, res) => {
+  const result = await fetchTodoTickets();
+  res.json(result);
 });
 
 // Accepts a Jira ticket and returns ticket info + mock list of files
