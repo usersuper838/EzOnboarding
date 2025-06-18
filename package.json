@@ -1,0 +1,9 @@
+{
+  "name": "ezonboarding",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "start": "echo 'Use npm start in frontend or backend'"
+  }
+}
