@@ -9,6 +9,9 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   const [todoTickets, setTodoTickets] = useState<any[]>([]);
+const [githubCommits, setGithubCommits] = useState<string[]>([]);
+const [githubLoading, setGithubLoading] = useState(false);
+const [githubError, setGithubError] = useState<string | null>(null);
   const [todoLoading, setTodoLoading] = useState(false);
   const [todoError, setTodoError] = useState<string | null>(null);
   const [errorLog, setErrorLog] = useState<string[]>([]);
@@ -57,6 +60,56 @@ function App() {
   return (
     <div style={{ maxWidth: 600, margin: '2rem auto', fontFamily: 'sans-serif' }}>
       <h1>EzOnboarding</h1>
+
+      {/* GitHub Commits Section */}
+      <div style={{ marginTop: 48, marginBottom: 24 }}>
+        <h2>GitHub Commits</h2>
+        <button
+          onClick={async () => {
+            setGithubLoading(true);
+            setGithubError(null);
+            setGithubCommits([]);
+            try {
+              const res = await fetch('http://localhost:4000/api/github/commits');
+              const data = await res.json();
+              if (Array.isArray(data.commits)) {
+                setGithubCommits(data.commits);
+              } else {
+                setGithubError(data.error || 'Unexpected response');
+              }
+            } catch (err: any) {
+              setGithubError(err?.message || 'Failed to fetch commits');
+            } finally {
+              setGithubLoading(false);
+            }
+          }}
+          disabled={githubLoading}
+        >
+          {githubLoading ? 'Loading Commits...' : 'List GitHub Commits'}
+        </button>
+        {githubError && (
+          <div style={{ color: 'red', marginTop: 12 }}>{githubError}</div>
+        )}
+        {githubCommits.length > 0 && (
+          <table style={{ width: '100%', marginTop: 20, borderCollapse: 'collapse', background: '#f6f8fa' }}>
+            <thead>
+              <tr>
+                <th style={{ border: '1px solid #ddd', padding: 8 }}>#</th>
+                <th style={{ border: '1px solid #ddd', padding: 8 }}>Commit Title</th>
+              </tr>
+            </thead>
+            <tbody>
+              {githubCommits.map((title: string, idx: number) => (
+                <tr key={idx}>
+                  <td style={{ border: '1px solid #ddd', padding: 8 }}>{idx + 1}</td>
+                  <td style={{ border: '1px solid #ddd', padding: 8 }}>{title}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
       <form onSubmit={handleSubmit}>
         <label>
           Jira Ticket ID:
